@@ -12,3 +12,11 @@ It doesn't remember the scaling settings when you close the enty.
 
 # Installation and setup
 This module requires [ruipin's libWrapper library](https://github.com/ruipin/fvtt-lib-wrapper).
+
+# Acknowledgements
+
+## Original Journal Scaler
+This module is based on [Journal Scaler](https://github.com/jegasus/journal-scaler). Thanks for the earlier versions. Hope, you're doing well.
+
+## ruipin's libWrapper
+This module uses [ruipin's libWrapper library](https://github.com/ruipin/fvtt-lib-wrapper). Take a look at his stuff if you want to develop modules for FVTT that override its default behaviors.
