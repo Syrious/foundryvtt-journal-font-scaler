@@ -6,17 +6,16 @@
 Based on [Journal Scaler](https://github.com/jegasus/journal-scaler), which hasn't been updated since Foundry v9.
 I extracted the text scaling parts and reworked it to make it compatible with v10 and v11 (both tested).
 
-## What is does
+### What is does
 This module enables you to change the font sizes inside journal windows using <kbd>ctrl</kbd>+`mouseWheelUp` and <kbd>ctrl</kbd>+`mouseWheelDown`.
 It doesn't remember the scaling settings when you close the enty. 
 
-# Installation and setup
+### Installation and setup
 This module requires [ruipin's libWrapper library](https://github.com/ruipin/fvtt-lib-wrapper).
 
-# Acknowledgements
-
-## Original Journal Scaler
+## Acknowledgements
+### Original Journal Scaler
 This module is based on [Journal Scaler](https://github.com/jegasus/journal-scaler). Thanks for the earlier versions. Hope, you're doing well.
 
-## ruipin's libWrapper
+### ruipin's libWrapper
 This module uses [ruipin's libWrapper library](https://github.com/ruipin/fvtt-lib-wrapper). Take a look at his stuff if you want to develop modules for FVTT that override its default behaviors.
