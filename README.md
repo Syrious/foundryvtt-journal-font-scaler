@@ -1,6 +1,4 @@
-![](https://img.shields.io/badge/Foundry-v11-informational)
-![GitHub All Releases](https://img.shields.io/github/downloads/Syrious/foundryvtt-journal-font-scaler/total?label=Downloads+total)  
-![Latest Release Download Count](https://img.shields.io/github/downloads/Syrious/foundryvtt-journal-font-scaler/latest/module.zip?label=Downloads+latest+release) 
+![](https://img.shields.io/badge/Foundry-v11-informational) ![GitHub All Releases](https://img.shields.io/github/downloads/Syrious/foundryvtt-journal-font-scaler/total?label=Downloads+total) ![Latest Release Download Count](https://img.shields.io/github/downloads/Syrious/foundryvtt-journal-font-scaler/latest/module.zip?label=Downloads+latest+release) 
 
 # FoundryVTT Journal-Font-Scaler
 Based on [Journal Scaler](https://github.com/jegasus/journal-scaler), which hasn't been updated since Foundry v9.
