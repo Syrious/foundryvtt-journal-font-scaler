@@ -23,7 +23,7 @@
     {
       "lang": "en",
       "name": "English",
-      "path": "languages/en.json",
+      "path": "languages/en.json"
     }
   ],
   "relationships": {
