@@ -1,3 +1,6 @@
+# 0.0.4
+- Adds v12 compatibility flag
+
 # 0.0.3
 - download url pointed to release instead of latest module.json 
 
