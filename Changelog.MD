@@ -1,3 +1,6 @@
+# 0.0.5
+- Removes unused files
+
 # 0.0.4
 - Adds v12 compatibility flag
 
