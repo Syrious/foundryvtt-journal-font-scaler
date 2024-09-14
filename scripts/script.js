@@ -59,7 +59,7 @@ function _onWheel_override(event) {
         resizeDirection = DECREASE;
     }
 
-    if(resizeDirection) {
+    if (resizeDirection) {
         _onWheel_textResize(journal_win, resizeDirection);
         _onWheel_imageResize(journal_win, resizeDirection);
     }
@@ -69,7 +69,7 @@ function _onWheel_textResize(journal_win, which_dir) {
     // Get the DOM element of the journal editor and change its style
     let journal_editor = getTextDomElement(journal_win);
 
-    if(!journal_editor){
+    if (!journal_editor) {
         console.error("Could not find journal DOM element");
         return;
     }
@@ -95,15 +95,24 @@ function _onWheel_imageResize(journal_win, which_dir) {
         let current_width = img.width;
         let current_height = img.height;
 
+        let parent = img.parentElement;
+        let max_width = parent.clientWidth - 10;
+        let max_height = parent.clientHeight - 10;
+
         if (which_dir === INCREASE) {
-            img.style.width = `${current_width + 10}px`;
-            img.style.height = `${current_height + 10}px`;
+            if (current_width < max_width && current_height < max_height) {
+                img.style.width = `${current_width + 10}px`;
+                img.style.height = `${current_height + 10}px`;
+            }
         } else if (which_dir === DECREASE) {
-            if(current_width > 50 && current_height > 50) {
+            console.log(current_width > 50)
+            console.log(current_height > 50)
+            if (current_width > 50 && current_height > 50) {
                 img.style.width = `${current_width - 10}px`;
                 img.style.height = `${current_height - 10}px`;
             }
         }
+
     }
 }
 
