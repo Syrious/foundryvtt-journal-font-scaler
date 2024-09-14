@@ -1,6 +1,6 @@
 # 0.1.0
-- Image scaling now works again
-- Adds setting whether to always scale image when ctrl + mouse wheel. If disabled, you have to additionally hold the shift key 
+- Image scaling now works again.
+- Added a setting to always scale images when using `Ctrl + Mouse Wheel`. If disabled, you must additionally hold the `Shift` key.
 
 # 0.0.5
 - Removes unused files

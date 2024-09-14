@@ -8,15 +8,11 @@ Based on [Journal Scaler](https://github.com/jegasus/journal-scaler), which hasn
 I reworked it to make it compatible with v10, v11 and v12.
 
 ### What is does
-This module enables you to change the font and image sizes inside journal windows 
-using `ctrl + mouseWheelUp` and `ctrl + mouseWheelDown`.
+This module enables you to change the font and image sizes inside journal windows using `Ctrl + Mouse Wheel Up` and `Ctrl + Mouse Wheel Down`.
 
-In the settings,
-you can choose if you want to always scale images or only if you are holding both `ctrl + shift` when scaling.
+In the settings, you can choose whether you want to always scale images or only scale them when you are holding both `Ctrl + Shift`.
 
-It doesn't remember
-the scaling settings when you close the entry and images and font size do not exactly scale the same.
-
+Please note that it doesn’t remember the scaling settings when you close the entry, and the images and font sizes do not scale exactly the same way.
 ### Installation and setup
 This module requires [ruipin's libWrapper library](https://github.com/ruipin/fvtt-lib-wrapper).
 
