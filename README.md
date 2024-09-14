@@ -3,13 +3,19 @@
 ![GitHub Downloads (all assets, latest release)](https://img.shields.io/github/downloads/Syrious/foundryvtt-journal-font-scaler/latest/total?label=Downloads+Latest)
 [![Support me on Patreon](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fshieldsio-patreon.vercel.app%2Fapi%3Fusername%3DSyriousWorkshop%26type%3Dpatrons&style=flat)](https://patreon.com/SyriousWorkshop)
 
-# FoundryVTT Journal-Font-Scaler
+# FoundryVTT Journal-Scaler
 Based on [Journal Scaler](https://github.com/jegasus/journal-scaler), which hasn't been updated since Foundry v9.
-I extracted the text scaling parts and reworked it to make it compatible with v10 and v11 (both tested).
+I reworked it to make it compatible with v10, v11 and v12.
 
 ### What is does
-This module enables you to change the font sizes inside journal windows using <kbd>ctrl</kbd>+`mouseWheelUp` and <kbd>ctrl</kbd>+`mouseWheelDown`.
-It doesn't remember the scaling settings when you close the enty. 
+This module enables you to change the font and image sizes inside journal windows 
+using `ctrl + mouseWheelUp` and `ctrl + mouseWheelDown`.
+
+In the settings,
+you can choose if you want to always scale images or only if you are holding both `ctrl + shift` when scaling.
+
+It doesn't remember
+the scaling settings when you close the entry and images and font size do not exactly scale the same.
 
 ### Installation and setup
 This module requires [ruipin's libWrapper library](https://github.com/ruipin/fvtt-lib-wrapper).

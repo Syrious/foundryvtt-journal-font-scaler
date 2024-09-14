@@ -14,7 +14,8 @@
     }
   ],
   "esmodules": [
-    "/scripts/script.js"
+    "/scripts/script.js",
+    "/scripts/settings.js"
   ],
   "relationships": {
     "requires": [

@@ -1,3 +1,5 @@
+import {moduleId} from "./settings.js";
+
 const MODULE_ID = 'journal-font-scaler';
 const JOURNALSHEET_CLASS = 'sheet journal-sheet';
 const INCREASE = 'increase';
@@ -5,14 +7,21 @@ const DECREASE = 'decrease';
 const SCALE_STEP = 1.1;  // Define a consistent scale step across text and images
 const MIN_IMG_SIZE = 40;    // Minimum size to prevent items from becoming too small
 const MIN_FONT_SIZE = 3
+let scaleImages;
 
 Hooks.once('ready', () => {
     if (!game.modules.get('lib-wrapper')?.active && game.user.isGM)
         ui.notifications.error("This module requires the 'libWrapper' module. Please install and activate it.");
 });
 
+export function setScaleImages(_scaleImages) {
+    scaleImages = _scaleImages;
+}
+
 // Overriding original mousewheel behavior
 Hooks.once('setup', function () {
+        setScaleImages(game.settings.get(moduleId, "scale-images"));
+
         libWrapper.register(
             MODULE_ID,
             'MouseManager.prototype._onWheel',
@@ -60,7 +69,10 @@ function _onWheel_override(event) {
 
     if (resizeDirection) {
         _onWheel_textResize(journal_win, resizeDirection);
-        _onWheel_imageResize(journal_win, resizeDirection);
+
+        if (scaleImages || event.shiftKey) {
+            _onWheel_imageResize(journal_win, resizeDirection);
+        }
     }
 }
 
@@ -119,7 +131,6 @@ function _onWheel_imageResize(journal_win, which_dir) {
 
     }
 }
-
 
 
 function getTextDomElement(journal_win) {
