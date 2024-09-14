@@ -1,8 +1,8 @@
 {
   "id": "journal-font-scaler",
-  "title": "Journal Font Scaler",
+  "title": "Journal Scaler",
   "description": "Use CTRL + mouse wheel to change font size within journal entries and journal editor",
-  "version": "0.0.4",
+  "version": "0.1.0",
   "compatibility": {
     "minimum": "10",
     "verified": "12"
@@ -15,9 +15,6 @@
   ],
   "esmodules": [
     "/scripts/script.js"
-  ],
-  "styles": [
-    "/styles/style.css"
   ],
   "relationships": {
     "requires": [
