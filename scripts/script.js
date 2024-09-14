@@ -99,9 +99,10 @@ function _onWheel_imageResize(journal_win, which_dir) {
             img.style.width = `${current_width + 10}px`;
             img.style.height = `${current_height + 10}px`;
         } else if (which_dir === DECREASE) {
-            // Ensure the size doesn't go negative
-            img.style.width = `${Math.max(current_width - 10, 10)}px`;
-            img.style.height = `${Math.max(current_height - 10, 10)}px`;
+            if(current_width > 50 && current_height > 50) {
+                img.style.width = `${current_width - 10}px`;
+                img.style.height = `${current_height - 10}px`;
+            }
         }
     }
 }
