@@ -52,11 +52,16 @@ function _onWheel_override(event) {
         return;
     }
 
-    // Find the direction of the mousewheel scroll
+    let resizeDirection;
     if ((event.wheelDelta > 0) || (event.deltaY < 0)) {
-        _onWheel_textResize(journal_win, INCREASE);
+        resizeDirection = INCREASE;
     } else if ((event.wheelDelta < 0) || (event.deltaY > 0)) {
-        _onWheel_textResize(journal_win, DECREASE);
+        resizeDirection = DECREASE;
+    }
+
+    if(resizeDirection) {
+        _onWheel_textResize(journal_win, resizeDirection);
+        _onWheel_imageResize(journal_win, resizeDirection);
     }
 }
 
@@ -76,6 +81,28 @@ function _onWheel_textResize(journal_win, which_dir) {
         journal_editor.style.fontSize = `${String(current_size + 1)}px`
     } else {
         journal_editor.style.fontSize = `${String(current_size - 1)}px`
+    }
+}
+
+function _onWheel_imageResize(journal_win, which_dir) {
+    let images = journal_win.getElementsByTagName('img');
+
+    if (images.length === 0) {
+        return;
+    }
+
+    for (let img of images) {
+        let current_width = img.width;
+        let current_height = img.height;
+
+        if (which_dir === INCREASE) {
+            img.style.width = `${current_width + 10}px`;
+            img.style.height = `${current_height + 10}px`;
+        } else if (which_dir === DECREASE) {
+            // Ensure the size doesn't go negative
+            img.style.width = `${Math.max(current_width - 10, 10)}px`;
+            img.style.height = `${Math.max(current_height - 10, 10)}px`;
+        }
     }
 }
 
