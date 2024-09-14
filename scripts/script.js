@@ -94,25 +94,19 @@ function _onWheel_imageResize(journal_win, which_dir) {
     for (let img of images) {
         let current_width = img.width;
         let current_height = img.height;
-
-        let parent = img.parentElement;
-        let max_width = parent.clientWidth - 10;
-        let max_height = parent.clientHeight - 10;
+        let aspect_ratio = img.naturalWidth / img.naturalHeight;
 
         if (which_dir === INCREASE) {
-            if (current_width < max_width && current_height < max_height) {
-                img.style.width = `${current_width + 10}px`;
-                img.style.height = `${current_height + 10}px`;
-            }
+            let newWidth = current_width + 10;
+            img.style.width = `${newWidth}px`;
+            img.style.height = `${newWidth / aspect_ratio}px`;
         } else if (which_dir === DECREASE) {
-            console.log(current_width > 50)
-            console.log(current_height > 50)
             if (current_width > 50 && current_height > 50) {
-                img.style.width = `${current_width - 10}px`;
-                img.style.height = `${current_height - 10}px`;
+                let newWidth = current_width - 10;
+                img.style.width = `${newWidth}px`;
+                img.style.height = `${newWidth / aspect_ratio}px`;
             }
         }
-
     }
 }
 
