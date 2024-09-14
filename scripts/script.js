@@ -25,6 +25,45 @@ Hooks.once('setup', function () {
     }
 )
 
+function _onWheel_override(event) {
+    if (!event.ctrlKey) {
+        return;
+    }
+
+    let jrn_sheet_windows = document.getElementsByClassName(JOURNALSHEET_CLASS);
+
+    if (jrn_sheet_windows.length === 0) {
+        return;
+    }
+
+    let i;
+    let journal_win;
+    let foundit = false;
+    for (i = 0; i < jrn_sheet_windows.length; i++) {
+        journal_win = jrn_sheet_windows[i];
+        if (journal_win.contains(event.target)) {
+            foundit = true;
+            break;
+        }
+    }
+
+    if (!foundit) {
+        return;
+    }
+
+    let resizeDirection;
+    if ((event.wheelDelta > 0) || (event.deltaY < 0)) {
+        resizeDirection = INCREASE;
+    } else if ((event.wheelDelta < 0) || (event.deltaY > 0)) {
+        resizeDirection = DECREASE;
+    }
+
+    if (resizeDirection) {
+        _onWheel_textResize(journal_win, resizeDirection);
+        _onWheel_imageResize(journal_win, resizeDirection);
+    }
+}
+
 function _onWheel_textResize(journal_win, which_dir) {
     // Get the DOM element of the journal editor and change its style
     let journal_editor = getTextDomElement(journal_win);
@@ -81,44 +120,7 @@ function _onWheel_imageResize(journal_win, which_dir) {
     }
 }
 
-function _onWheel_override(event) {
-    if (!event.ctrlKey) {
-        return;
-    }
 
-    let jrn_sheet_windows = document.getElementsByClassName(JOURNALSHEET_CLASS);
-
-    if (jrn_sheet_windows.length === 0) {
-        return;
-    }
-
-    let i;
-    let journal_win;
-    let foundit = false;
-    for (i = 0; i < jrn_sheet_windows.length; i++) {
-        journal_win = jrn_sheet_windows[i];
-        if (journal_win.contains(event.target)) {
-            foundit = true;
-            break;
-        }
-    }
-
-    if (!foundit) {
-        return;
-    }
-
-    let resizeDirection;
-    if ((event.wheelDelta > 0) || (event.deltaY < 0)) {
-        resizeDirection = INCREASE;
-    } else if ((event.wheelDelta < 0) || (event.deltaY > 0)) {
-        resizeDirection = DECREASE;
-    }
-
-    if (resizeDirection) {
-        _onWheel_textResize(journal_win, resizeDirection);
-        _onWheel_imageResize(journal_win, resizeDirection);
-    }
-}
 
 function getTextDomElement(journal_win) {
     let journal_editor = journal_win.getElementsByClassName('journal-entry-page')[0];
