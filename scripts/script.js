@@ -134,7 +134,7 @@ function _onWheel_imageResize(journal_win, which_dir) {
 
 
 function getTextDomElement(journal_win) {
-    let journal_editor = journal_win.getElementsByClassName('journal-entry-page')[0];
+    let journal_editor = journal_win.getElementsByClassName('journal-page-content')[0];
 
     if (!journal_editor) {
         journal_editor = journal_win.getElementsByClassName('editor-content')[0];
