@@ -1,3 +1,6 @@
+# 0.1.2
+- Adds compatibility with more systems. Thanks to [Honkou](https://github.com/Honkou) 
+
 # 0.1.0
 - Image scaling now works again.
 - Added a setting to always scale images when using `Ctrl + Mouse Wheel`. If disabled, you must additionally hold the `Shift` key.
