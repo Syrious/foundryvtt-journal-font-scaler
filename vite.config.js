@@ -1,6 +1,6 @@
+
 import { defineConfig } from 'vite';
 import copy from 'rollup-plugin-copy';
-import { resolve } from 'path';
 
 const s_PACKAGE_ID = 'modules/journal-font-scaler';
 
@@ -26,23 +26,16 @@ export default defineConfig({
     outDir: __dirname + "/dist",
     emptyOutDir: true,
     sourcemap: true,
-    lib: {
-      entry: {
-        'scripts/script': resolve(__dirname, 'src/scripts/script.js'),
-        'scripts/settings': resolve(__dirname, 'src/scripts/settings.js'),
-      },
-      formats: ['es'],
-    },
     rollupOptions: {
+      input: 'src/index.js',
       output: {
-        entryFileNames: '[name].js',
+        entryFileNames: 'index.js'
       },
       plugins: [
         copy({
           targets: [
             { src: 'module.json', dest: 'dist/' },
-            { src: 'LICENSE', dest: 'dist/' },
-            { src: 'assets/**/*', dest: 'dist/assets/' },
+            { src: 'LICENSE', dest: 'dist/' }
           ],
           hook: 'writeBundle',
         }),
