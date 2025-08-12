@@ -2,7 +2,7 @@
   "id": "journal-font-scaler",
   "title": "Journal Scaler",
   "description": "Use CTRL + mouse wheel to scale texts and images of journal entries",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "compatibility": {
     "minimum": "10",
     "verified": "12"
@@ -26,6 +26,6 @@
     ]
   },
   "url": "https://github.com/Syrious/foundryvtt-journal-font-scaler",
-  "manifest": "${module-endpoint}",
-  "download": "${download-endpoint}"
+  "manifest": "https://hub.adventurer-backpack.com/api/download/manifest/journal-font-scaler/latest",
+  "download": "https://hub.adventurer-backpack.com/api/download/module/journal-font-scaler/0.1.2"
 }
