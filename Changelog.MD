@@ -1,8 +1,5 @@
-# 1.0.0
-- Adds Foundry V13 support (does not require libWrapper anymore)
-
 # 0.1.2
-- Adds compatibility with more systems. Thanks to [Honkou](https://github.com/Honkou) 
+- Adds compatibility with more systems. Thanks to [Honkou](https://github.com/Honkou)
 
 # 0.1.0
 - Image scaling now works again.
@@ -15,10 +12,10 @@
 - Adds v12 compatibility flag
 
 # 0.0.3
-- download url pointed to release instead of latest module.json 
+- download url pointed to release instead of latest module.json
 
 # 0.0.2
-- Fixed error on installing module due to an invalid path 
+- Fixed error on installing module due to an invalid path
 
 # 0.0.1
 - Init
