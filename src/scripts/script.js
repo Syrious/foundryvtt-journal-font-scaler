@@ -8,6 +8,8 @@ const MIN_IMG_SIZE = 40;    // Minimum size to prevent items from becoming too s
 const MIN_FONT_SIZE = 3
 let scaleImages;
 
+/// <reference path="./foundry.d.ts" />
+
 export function setupScript() {
     setScaleImages(game.settings.get(moduleId, "scale-images"));
 
@@ -17,7 +19,7 @@ export function setupScript() {
         }, {passive: false});
     } else {
         libWrapper.register(
-            MODULE_ID,
+            moduleId,
             'MouseManager.prototype._onWheel',
             function (existing_onWheel, event) {
                 _onWheel_override.bind(this)(event);
@@ -45,16 +47,16 @@ function _onWheel_override(event) {
 
     let i;
     let journal_win;
-    let foundit = false;
+    let foundIt = false;
     for (i = 0; i < jrn_sheet_windows.length; i++) {
         journal_win = jrn_sheet_windows[i];
         if (journal_win.contains(event.target)) {
-            foundit = true;
+            foundIt = true;
             break;
         }
     }
 
-    if (!foundit) {
+    if (!foundIt) {
         return;
     }
 
