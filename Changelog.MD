@@ -1,6 +1,5 @@
 # 1.0.0
-- Adds Foundry V13 support
-- Drops support for previous Foundry versions
+- Adds Foundry V13 support (does not require libWrapper anymore)
 
 # 0.1.2
 - Adds compatibility with more systems. Thanks to [Honkou](https://github.com/Honkou) 
