@@ -20,19 +20,13 @@ export function setScaleImages(_scaleImages) {
 
 // Overriding original mousewheel behavior
 Hooks.once('setup', function () {
-        setScaleImages(game.settings.get(moduleId, "scale-images"));
+    setScaleImages(game.settings.get(moduleId, "scale-images"));
 
-        libWrapper.register(
-            MODULE_ID,
-            'MouseManager.prototype._onWheel',
-            function (existing_onWheel, event) {
-                _onWheel_override.bind(this)(event);
-                return existing_onWheel.bind(this)(event);
-            },
-            'WRAPPER',
-        )
-    }
-)
+    // Add our wheel event listener
+    window.addEventListener("wheel", (event) => {
+        _onWheel_override(event);
+    }, { passive: false });
+});
 
 function _onWheel_override(event) {
     if (!event.ctrlKey) {

@@ -41,9 +41,7 @@ export default defineConfig({
         copy({
           targets: [
             { src: 'module.json', dest: 'dist/' },
-            { src: 'README.md', dest: 'dist/' },
             { src: 'LICENSE', dest: 'dist/' },
-            { src: 'Changelog.MD', dest: 'dist/' },
             { src: 'assets/**/*', dest: 'dist/assets/' },
           ],
           hook: 'writeBundle',
