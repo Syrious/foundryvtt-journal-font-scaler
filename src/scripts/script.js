@@ -1,6 +1,5 @@
-import {moduleId} from "./settings.js";
+import {isV13OrLater, moduleId} from "./helper";
 
-const MODULE_ID = 'journal-font-scaler';
 const JOURNALSHEET_CLASS = 'sheet journal-sheet';
 const INCREASE = 'increase';
 const DECREASE = 'decrease';
@@ -9,24 +8,29 @@ const MIN_IMG_SIZE = 40;    // Minimum size to prevent items from becoming too s
 const MIN_FONT_SIZE = 3
 let scaleImages;
 
-Hooks.once('ready', () => {
-    if (!game.modules.get('lib-wrapper')?.active && game.user.isGM)
-        ui.notifications.error("This module requires the 'libWrapper' module. Please install and activate it.");
-});
+export function setupScript() {
+    setScaleImages(game.settings.get(moduleId, "scale-images"));
+
+    if (isV13OrLater()) {
+        window.addEventListener("wheel", (event) => {
+            _onWheel_override(event);
+        }, {passive: false});
+    } else {
+        libWrapper.register(
+            MODULE_ID,
+            'MouseManager.prototype._onWheel',
+            function (existing_onWheel, event) {
+                _onWheel_override.bind(this)(event);
+                return existing_onWheel.bind(this)(event);
+            },
+            'WRAPPER',
+        )
+    }
+}
 
 export function setScaleImages(_scaleImages) {
     scaleImages = _scaleImages;
 }
-
-// Overriding original mousewheel behavior
-Hooks.once('setup', function () {
-    setScaleImages(game.settings.get(moduleId, "scale-images"));
-
-    // Add our wheel event listener
-    window.addEventListener("wheel", (event) => {
-        _onWheel_override(event);
-    }, { passive: false });
-});
 
 function _onWheel_override(event) {
     if (!event.ctrlKey) {
