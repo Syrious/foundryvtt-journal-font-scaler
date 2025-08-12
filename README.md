@@ -3,6 +3,9 @@
 ![GitHub Downloads (all assets, latest release)](https://img.shields.io/github/downloads/Syrious/foundryvtt-journal-font-scaler/latest/total?label=Downloads+Latest)
 [![Support me on Patreon](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fshieldsio-patreon.vercel.app%2Fapi%3Fusername%3DSyriousWorkshop%26type%3Dpatrons&style=flat)](https://patreon.com/SyriousWorkshop)
 
+# CODE-ONLY REPO
+This repository is only meant to host the code. All new releases can be found [on my hub](https://hub.adventurer-backpack.com/module/journal-font-scaler)
+
 # FoundryVTT Journal-Scaler
 Based on [Journal Scaler](https://github.com/jegasus/journal-scaler), which hasn't been updated since Foundry v9.
 I reworked it to make it compatible with v10, v11 and v12.
