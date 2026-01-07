@@ -1,6 +1,7 @@
 import {isV13OrLater, moduleId} from "./helper";
 
-const JOURNALSHEET_CLASS = 'sheet journal-sheet';
+const DEFAULT_JOURNAL_SHEET_CLASS = 'sheet journal-sheet';
+const MONKS_JOURNAL_SHEET_CLASS = 'sheet monks-journal-sheet';
 const INCREASE = 'increase';
 const DECREASE = 'decrease';
 const SCALE_STEP = 1.1;  // Define a consistent scale step across text and images
@@ -39,17 +40,24 @@ function _onWheel_override(event) {
         return;
     }
 
-    let jrn_sheet_windows = document.getElementsByClassName(JOURNALSHEET_CLASS);
+    let isMonkSheet = false;
+    let journalSheetElement = document.getElementsByClassName(DEFAULT_JOURNAL_SHEET_CLASS);
 
-    if (jrn_sheet_windows.length === 0) {
+    if (journalSheetElement.length === 0) {
+        // Alternative test for Monk's Journal Sheet
+        journalSheetElement = document.getElementsByClassName(MONKS_JOURNAL_SHEET_CLASS);
+        isMonkSheet = true;
+    }
+
+    if (journalSheetElement.length === 0) {
         return;
     }
 
     let i;
     let journal_win;
     let foundIt = false;
-    for (i = 0; i < jrn_sheet_windows.length; i++) {
-        journal_win = jrn_sheet_windows[i];
+    for (i = 0; i < journalSheetElement.length; i++) {
+        journal_win = journalSheetElement[i];
         if (journal_win.contains(event.target)) {
             foundIt = true;
             break;
@@ -68,7 +76,7 @@ function _onWheel_override(event) {
     }
 
     if (resizeDirection) {
-        _onWheel_textResize(journal_win, resizeDirection);
+        _onWheel_textResize(journal_win, resizeDirection, isMonkSheet);
 
         if (scaleImages || event.shiftKey) {
             _onWheel_imageResize(journal_win, resizeDirection);
@@ -76,9 +84,9 @@ function _onWheel_override(event) {
     }
 }
 
-function _onWheel_textResize(journal_win, which_dir) {
+function _onWheel_textResize(journal_win, which_dir, isMonkSheet) {
     // Get the DOM element of the journal editor and change its style
-    let journal_editor = getTextDomElement(journal_win);
+    let journal_editor = getTextDomElement(journal_win, isMonkSheet);
 
     if (!journal_editor) {
         console.error("Could not find journal DOM element");
@@ -133,11 +141,22 @@ function _onWheel_imageResize(journal_win, which_dir) {
 }
 
 
-function getTextDomElement(journal_win) {
-    let journal_editor = journal_win.getElementsByClassName('journal-page-content')[0];
+function getTextDomElement(journal_win, isMonkSheet) {
+    let journal_editor;
+
+    if (isMonkSheet) {
+        // This is for Monk's Journal Sheet. We can manipulate the whole element directly
+        return journal_win;
+    }
 
     if (!journal_editor) {
+        // Foundry's default in Edit mode
         journal_editor = journal_win.getElementsByClassName('editor-content')[0];
+    }
+
+    if (!journal_editor) {
+        // Foundry's default in Read-Only mode
+        journal_editor = journal_win.getElementsByClassName('journal-page-content')[0];
     }
 
     return journal_editor;

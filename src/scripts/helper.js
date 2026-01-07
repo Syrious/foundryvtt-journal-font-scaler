@@ -8,7 +8,7 @@ export function isV13OrLater() {
     return foundry.utils.isNewerVersion(game.version, "13");
 }
 
-export function verifyPrerequisits() {
+export function verifyPrerequisites() {
     let isGm = game.user.isGM;
     let libWrapperActive = game.modules.get('lib-wrapper')?.active;
     let needsLibWrapperButIsNotActive = isGm && !isV13OrLater() && !libWrapperActive;
