@@ -157,22 +157,38 @@ function _onWheel_imageResize(journal_win, which_dir) {
 
 
 function getTextDomElement(journal_win, isMonkSheet) {
-    let journal_editor;
+    let journalTextBodyElement;
+    let type = ''
 
     if (isMonkSheet) {
         // This is for Monk's Journal Sheet. We can manipulate the whole element directly
-        return journal_win;
+        journalTextBodyElement =  journal_win.getElementsByClassName("sheet-body")[0];
+        type = "monks"
     }
 
-    if (!journal_editor) {
+    if (!journalTextBodyElement) {
         // Foundry's default in Edit mode
-        journal_editor = journal_win.getElementsByClassName('editor-content')[0];
+        journalTextBodyElement = journal_win.getElementsByClassName('editor-content')[0];
+        type = "editor"
+        removePredefinedFontSizes(journalTextBodyElement);
+
     }
 
-    if (!journal_editor) {
+    if (!journalTextBodyElement) {
         // Foundry's default in Read-Only mode
-        journal_editor = journal_win.getElementsByClassName('journal-page-content')[0];
+        journalTextBodyElement = journal_win.getElementsByClassName('journal-page-content')[0];
+        type = "default"
     }
 
-    return journal_editor;
+    return {journalTextBodyElement, type};
+}
+
+
+function removePredefinedFontSizes(journalSheetElement) {
+    if(!journalSheetElement) return;
+
+    const textElements = journalSheetElement.querySelectorAll('p, h1, h2, h3, h4, h5, h6, span, div, li');
+    textElements.forEach(element => {
+        element.style.fontSize = 'inherit';
+    });
 }
