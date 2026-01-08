@@ -86,14 +86,24 @@ function _onWheel_override(event) {
 
 function _onWheel_textResize(journal_win, which_dir, isMonkSheet) {
     // Get the DOM element of the journal editor and change its style
-    let journal_editor = getTextDomElement(journal_win, isMonkSheet);
+    let journalPageElement = getTextDomElement(journal_win, isMonkSheet);
 
-    if (!journal_editor) {
+    console.log(journalPageElement, isMonkSheet)
+    if (!journalPageElement) {
         console.error("Could not find journal DOM element");
         return;
     }
 
-    let current_size_str = journal_editor.style.fontSize;
+    for (let child of journalPageElement.children) {
+        applyTextResizeTo(child, which_dir)
+    }
+}
+
+function applyTextResizeTo(child, which_dir) {
+    // Get computed font size (includes CSS styles, not just inline)
+    let computedStyle = window.getComputedStyle(child);
+    let current_size_str = computedStyle.fontSize;
+
     let current_size = current_size_str === '' ? 14 : Number(current_size_str.replace('px', ''));
 
     let new_size;
@@ -104,7 +114,7 @@ function _onWheel_textResize(journal_win, which_dir, isMonkSheet) {
     }
 
     if (new_size > MIN_FONT_SIZE) {
-        journal_editor.style.fontSize = `${new_size}px`;
+        child.style.fontSize = `${new_size}px`;
     }
 }
 
