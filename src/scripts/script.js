@@ -95,12 +95,14 @@ function _onWheel_textResize(journal_win, which_dir, isMonkSheet) {
         return;
     }
 
+    if (journalPageElement.applySelf) {
+        resizeFontOfElement(textBody, which_dir);
+    }
+
     if (journalPageElement.applyToChildren) {
         for (let child of textBody.children) {
             applyTextResizeToElementAndChildren(child, which_dir)
         }
-    } else {
-        resizeFontOfElement(textBody, which_dir);
     }
 }
 
@@ -172,10 +174,17 @@ function _onWheel_imageResize(journal_win, which_dir) {
 function getTextDomElement(journal_win, isMonkSheet) {
     let textBody;
     let applyToChildren = true;
+    let applySelf = true;
 
     if (isMonkSheet) {
         // This is for Monk's Journal Sheet. We can manipulate the whole element directly
         textBody = journal_win.getElementsByClassName("sheet-body")[0];
+        applyToChildren = true;
+    }
+
+    if (!textBody) {
+        // ProseMirror editor
+        textBody = journal_win.getElementsByClassName('editor-content')[0];
     }
 
     if (!textBody) {
@@ -183,45 +192,8 @@ function getTextDomElement(journal_win, isMonkSheet) {
         textBody = journal_win.getElementsByClassName('journal-page-content')[0];
     }
 
-    if (!textBody) {
-        // Foundry's default in Edit mode
-        textBody = journal_win.getElementsByClassName('editor-content')[0];
-        applyToChildren = false
-    }
 
-
-
-    // removePredefinedFontSizes(textBody);
-    return {textBody, applyToChildren};
+    return {textBody, applyToChildren, applySelf};
 }
 
 
-function removePredefinedFontSizes(journalSheetElement) {
-    if (!journalSheetElement) return;
-    const styleId = 'override-cosmere-text';
-    if (!journalSheetElement.getElementById(styleId)) {
-        const style = journalSheetElement.createElement('style');
-        style.id = styleId;
-        style.textContent = `
-        .application p,
-        .application h1,
-        .application h2,
-        .application h3,
-        .application h4,
-        .application h5,
-        .application h6,
-        .application span,
-        .application div,
-        .application li {
-            font-size: inherit !important;
-        }
-    `;
-        document.head.appendChild(style);
-    }
-
-    //
-    // const textElements = journalSheetElement.querySelectorAll('p, h1, h2, h3, h4, h5, h6, span, div, li');
-    // textElements.forEach(element => {
-    //     element.style.fontSize = 'unset';
-    // });
-}
