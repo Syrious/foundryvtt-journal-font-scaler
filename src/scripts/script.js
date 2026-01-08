@@ -99,9 +99,9 @@ function _onWheel_textResize(journal_win, which_dir, isMonkSheet) {
     }
 }
 
-function applyTextResizeTo(child, which_dir) {
+function applyTextResizeTo(element, which_dir) {
     // Get computed font size (includes CSS styles, not just inline)
-    let computedStyle = window.getComputedStyle(child);
+    let computedStyle = window.getComputedStyle(element);
     let current_size_str = computedStyle.fontSize;
 
     let current_size = current_size_str === '' ? 14 : Number(current_size_str.replace('px', ''));
@@ -114,7 +114,12 @@ function applyTextResizeTo(child, which_dir) {
     }
 
     if (new_size > MIN_FONT_SIZE) {
-        child.style.fontSize = `${new_size}px`;
+        element.style.fontSize = `${new_size}px`;
+    }
+
+    // Recursively apply to all children
+    for (let child of element.children) {
+        applyTextResizeTo(child, which_dir);
     }
 }
 
