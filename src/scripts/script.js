@@ -87,39 +87,51 @@ function _onWheel_override(event) {
 function _onWheel_textResize(journal_win, which_dir, isMonkSheet) {
     // Get the DOM element of the journal editor and change its style
     let journalPageElement = getTextDomElement(journal_win, isMonkSheet);
+    let textBody = journalPageElement.textBody;
 
-    console.log(journalPageElement, isMonkSheet)
-    if (!journalPageElement) {
+    console.log(textBody, isMonkSheet)
+    if (!textBody) {
         console.error("Could not find journal DOM element");
         return;
     }
 
-    for (let child of journalPageElement.children) {
-        applyTextResizeTo(child, which_dir)
+    if (journalPageElement.applyToChildren) {
+        for (let child of textBody.children) {
+            applyTextResizeToElementAndChildren(child, which_dir)
+        }
+    } else {
+        resizeFontOfElement(textBody, which_dir);
     }
 }
 
-function applyTextResizeTo(element, which_dir) {
+function computeNewFontSize(element, which_dir) {
     // Get computed font size (includes CSS styles, not just inline)
     let computedStyle = window.getComputedStyle(element);
     let current_size_str = computedStyle.fontSize;
 
     let current_size = current_size_str === '' ? 14 : Number(current_size_str.replace('px', ''));
 
-    let new_size;
     if (which_dir === INCREASE) {
-        new_size = current_size * SCALE_STEP;
+        return current_size * SCALE_STEP;
     } else {
-        new_size = current_size / SCALE_STEP;
+        return current_size / SCALE_STEP;
     }
+}
+
+function resizeFontOfElement(element, which_dir) {
+    let new_size = computeNewFontSize(element, which_dir);
 
     if (new_size > MIN_FONT_SIZE) {
         element.style.fontSize = `${new_size}px`;
     }
+}
+
+function applyTextResizeToElementAndChildren(element, which_dir) {
+    resizeFontOfElement(element, which_dir);
 
     // Recursively apply to all children
     for (let child of element.children) {
-        applyTextResizeTo(child, which_dir);
+        applyTextResizeToElementAndChildren(child, which_dir);
     }
 }
 
@@ -157,35 +169,34 @@ function _onWheel_imageResize(journal_win, which_dir) {
 
 
 function getTextDomElement(journal_win, isMonkSheet) {
-    let journalTextBodyElement;
-    let type = ''
+    let textBody;
+    let applyToChildren = true;
 
     if (isMonkSheet) {
         // This is for Monk's Journal Sheet. We can manipulate the whole element directly
-        journalTextBodyElement =  journal_win.getElementsByClassName("sheet-body")[0];
-        type = "monks"
+        textBody = journal_win.getElementsByClassName("sheet-body")[0];
+
     }
 
-    if (!journalTextBodyElement) {
+    if (!textBody) {
         // Foundry's default in Edit mode
-        journalTextBodyElement = journal_win.getElementsByClassName('editor-content')[0];
-        type = "editor"
-        removePredefinedFontSizes(journalTextBodyElement);
+        textBody = journal_win.getElementsByClassName('editor-content')[0];
+        applyToChildren = false
 
     }
 
-    if (!journalTextBodyElement) {
+    if (!textBody) {
         // Foundry's default in Read-Only mode
-        journalTextBodyElement = journal_win.getElementsByClassName('journal-page-content')[0];
-        type = "default"
+        textBody = journal_win.getElementsByClassName('journal-page-content')[0];
     }
 
-    return {journalTextBodyElement, type};
+    removePredefinedFontSizes(textBody);
+    return {textBody, applyToChildren};
 }
 
 
 function removePredefinedFontSizes(journalSheetElement) {
-    if(!journalSheetElement) return;
+    if (!journalSheetElement) return;
 
     const textElements = journalSheetElement.querySelectorAll('p, h1, h2, h3, h4, h5, h6, span, div, li');
     textElements.forEach(element => {
