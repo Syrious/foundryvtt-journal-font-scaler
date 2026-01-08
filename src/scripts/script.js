@@ -89,7 +89,7 @@ function _onWheel_textResize(journal_win, which_dir, isMonkSheet) {
     let journalPageElement = getTextDomElement(journal_win, isMonkSheet);
     let textBody = journalPageElement.textBody;
 
-    console.log(textBody, isMonkSheet)
+
     if (!textBody) {
         console.error("Could not find journal DOM element");
         return;
@@ -104,25 +104,26 @@ function _onWheel_textResize(journal_win, which_dir, isMonkSheet) {
     }
 }
 
-function computeNewFontSize(element, which_dir) {
+function computeNewFontSize(element, direction) {
     // Get computed font size (includes CSS styles, not just inline)
     let computedStyle = window.getComputedStyle(element);
-    let current_size_str = computedStyle.fontSize;
+    let currentSizeString = computedStyle.fontSize;
 
-    let current_size = current_size_str === '' ? 14 : Number(current_size_str.replace('px', ''));
 
-    if (which_dir === INCREASE) {
-        return current_size * SCALE_STEP;
+    let currentSize = currentSizeString === '' ? 14 : Number(currentSizeString.replace('px', ''));
+
+    if (direction === INCREASE) {
+        return currentSize * SCALE_STEP;
     } else {
-        return current_size / SCALE_STEP;
+        return currentSize / SCALE_STEP;
     }
 }
 
 function resizeFontOfElement(element, which_dir) {
-    let new_size = computeNewFontSize(element, which_dir);
+    let newFontSize = computeNewFontSize(element, which_dir);
 
-    if (new_size > MIN_FONT_SIZE) {
-        element.style.fontSize = `${new_size}px`;
+    if (newFontSize > MIN_FONT_SIZE) {
+        element.style.fontSize = `${newFontSize}px`;
     }
 }
 
@@ -175,14 +176,6 @@ function getTextDomElement(journal_win, isMonkSheet) {
     if (isMonkSheet) {
         // This is for Monk's Journal Sheet. We can manipulate the whole element directly
         textBody = journal_win.getElementsByClassName("sheet-body")[0];
-
-    }
-
-    if (!textBody) {
-        // Foundry's default in Edit mode
-        textBody = journal_win.getElementsByClassName('editor-content')[0];
-        applyToChildren = false
-
     }
 
     if (!textBody) {
@@ -190,16 +183,45 @@ function getTextDomElement(journal_win, isMonkSheet) {
         textBody = journal_win.getElementsByClassName('journal-page-content')[0];
     }
 
-    removePredefinedFontSizes(textBody);
+    if (!textBody) {
+        // Foundry's default in Edit mode
+        textBody = journal_win.getElementsByClassName('editor-content')[0];
+        applyToChildren = false
+    }
+
+
+
+    // removePredefinedFontSizes(textBody);
     return {textBody, applyToChildren};
 }
 
 
 function removePredefinedFontSizes(journalSheetElement) {
     if (!journalSheetElement) return;
+    const styleId = 'override-cosmere-text';
+    if (!journalSheetElement.getElementById(styleId)) {
+        const style = journalSheetElement.createElement('style');
+        style.id = styleId;
+        style.textContent = `
+        .application p,
+        .application h1,
+        .application h2,
+        .application h3,
+        .application h4,
+        .application h5,
+        .application h6,
+        .application span,
+        .application div,
+        .application li {
+            font-size: inherit !important;
+        }
+    `;
+        document.head.appendChild(style);
+    }
 
-    const textElements = journalSheetElement.querySelectorAll('p, h1, h2, h3, h4, h5, h6, span, div, li');
-    textElements.forEach(element => {
-        element.style.fontSize = 'inherit';
-    });
+    //
+    // const textElements = journalSheetElement.querySelectorAll('p, h1, h2, h3, h4, h5, h6, span, div, li');
+    // textElements.forEach(element => {
+    //     element.style.fontSize = 'unset';
+    // });
 }
