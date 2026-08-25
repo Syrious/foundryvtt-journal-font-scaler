@@ -1,199 +1,104 @@
-import {isV13OrLater, moduleId} from "./helper";
+import { moduleId } from "./helper";
 
-const DEFAULT_JOURNAL_SHEET_CLASS = 'sheet journal-sheet';
-const MONKS_JOURNAL_SHEET_CLASS = 'sheet monks-journal-sheet';
-const INCREASE = 'increase';
-const DECREASE = 'decrease';
-const SCALE_STEP = 1.1;  // Define a consistent scale step across text and images
-const MIN_IMG_SIZE = 40;    // Minimum size to prevent items from becoming too small
-const MIN_FONT_SIZE = 3
-let scaleImages;
+const SCALE_STEP = 1.1;
+const MIN_IMG_SIZE = 40;
+const MIN_FONT_SIZE = 3;
+let scaleImages = false;
 
-/// <reference path="./foundry.d.ts" />
+const ZOOM_CONFIG = {
+    // Journal Sheets selectrs
+    sheets: [
+        '.sheet.journal-sheet .journal-entry-pages', // Default Foundry
+        '.sheet.journal-sheet .sheet-main', // Campaign Codex
+        '.sheet.monks-journal-sheet', // Monk's Journal
+        '.sheet.item-sheet',
+        '.wgtngm-view-notes .vn-editor-container' // Mini Calendar
+    ],
+    // Editor selectors
+    editors: [
+        '.journal-page-content',
+        '.editor-content',
+        '.editor',
+        '.prosemirror',
+        '.monks-journal-content'
+    ]
+};
 
+/**
+ * Initializes the wheel event listener for journal scaling.
+ */
 export function setupScript() {
-    setScaleImages(game.settings.get(moduleId, "scale-images"));
+    scaleImages = game.settings.get(moduleId, "scale-images");
+    window.addEventListener("wheel", handleJournalResize, { passive: false });
+}
 
-    if (isV13OrLater()) {
-        window.addEventListener("wheel", (event) => {
-            _onWheel_override(event);
-        }, {passive: false});
-    } else {
-        libWrapper.register(
-            moduleId,
-            'MouseManager.prototype._onWheel',
-            function (existing_onWheel, event) {
-                _onWheel_override.bind(this)(event);
-                return existing_onWheel.bind(this)(event);
-            },
-            'WRAPPER',
-        )
+/**
+ * Updates the image scaling configuration dynamically.
+ * @param {boolean} newScaleImages
+ */
+export function setScaleImages(newScaleImages) {
+    scaleImages = newScaleImages;
+}
+
+/**
+ * Handles the mouse wheel event to zoom journal text and images.
+ * @param {WheelEvent} event
+ */
+function handleJournalResize(event) {
+    if (!event.ctrlKey) return;
+
+    const sheetSelector = ZOOM_CONFIG.sheets.join(', ');
+    const journalSheet = event.target.closest(sheetSelector);
+    if (!journalSheet) return;
+
+    event.preventDefault();
+
+    const direction = event.deltaY < 0 ? 'increase' : 'decrease';
+
+    resizeJournalText(journalSheet, direction);
+
+    if (scaleImages) {
+        resizeJournalImages(journalSheet, direction, event.target);
     }
 }
 
-export function setScaleImages(_scaleImages) {
-    scaleImages = _scaleImages;
-}
+/**
+ * Adjusts the font size of matched editor elements inside the sheet.
+ * @param {HTMLElement} journalSheet
+ * @param {'increase'|'decrease'} direction
+ */
+function resizeJournalText(journalSheet, direction) {
+    const editorSelector = ZOOM_CONFIG.editors.join(', ');
+    const editors = journalSheet.querySelectorAll(editorSelector);
 
-function _onWheel_override(event) {
-    if (!event.ctrlKey) {
-        return;
-    }
+    editors.forEach(editor => {
+        const currentSize = parseFloat(window.getComputedStyle(editor).fontSize) || 16;
+        const newSize = direction === 'increase' ? currentSize * SCALE_STEP : currentSize / SCALE_STEP;
 
-    let isMonkSheet = false;
-    let journalSheetElement = document.getElementsByClassName(DEFAULT_JOURNAL_SHEET_CLASS);
-
-    if (journalSheetElement.length === 0) {
-        // Alternative test for Monk's Journal Sheet
-        journalSheetElement = document.getElementsByClassName(MONKS_JOURNAL_SHEET_CLASS);
-        isMonkSheet = true;
-    }
-
-    if (journalSheetElement.length === 0) {
-        return;
-    }
-
-    let i;
-    let journal_win;
-    let foundIt = false;
-    for (i = 0; i < journalSheetElement.length; i++) {
-        journal_win = journalSheetElement[i];
-        if (journal_win.contains(event.target)) {
-            foundIt = true;
-            break;
+        if (newSize >= MIN_FONT_SIZE) {
+            editor.style.fontSize = `${newSize}px`;
         }
-    }
+    });
+}
 
-    if (!foundIt) {
-        return;
-    }
+/**
+ * Adjusts the size of images inside the journal sheet.
+ * @param {HTMLElement} journalSheet
+ * @param {'increase'|'decrease'} direction
+ * @param {EventTarget} target
+ */
+function resizeJournalImages(journalSheet, direction, target) {
+    const images = target.matches('img') ? [target] : journalSheet.querySelectorAll('img');
 
-    let resizeDirection;
-    if ((event.wheelDelta > 0) || (event.deltaY < 0)) {
-        resizeDirection = INCREASE;
-    } else if ((event.wheelDelta < 0) || (event.deltaY > 0)) {
-        resizeDirection = DECREASE;
-    }
+    images.forEach(img => {
+        const currentWidth = img.clientWidth || img.getBoundingClientRect().width;
+        if (!currentWidth) return;
 
-    if (resizeDirection) {
-        _onWheel_textResize(journal_win, resizeDirection, isMonkSheet);
+        const newWidth = direction === 'increase' ? currentWidth * SCALE_STEP : currentWidth / SCALE_STEP;
 
-        if (scaleImages || event.shiftKey) {
-            _onWheel_imageResize(journal_win, resizeDirection);
+        if (newWidth >= MIN_IMG_SIZE) {
+            img.style.width = `${newWidth}px`;
+            img.style.height = 'auto';
         }
-    }
+    });
 }
-
-function _onWheel_textResize(journal_win, which_dir, isMonkSheet) {
-    // Get the DOM element of the journal editor and change its style
-    let journalPageElement = getTextDomElement(journal_win, isMonkSheet);
-    let textBody = journalPageElement.textBody;
-
-
-    if (!textBody) {
-        console.error("Could not find journal DOM element");
-        return;
-    }
-
-    if (journalPageElement.applySelf) {
-        resizeFontOfElement(textBody, which_dir);
-    }
-
-    if (journalPageElement.applyToChildren) {
-        for (let child of textBody.children) {
-            applyTextResizeToElementAndChildren(child, which_dir)
-        }
-    }
-}
-
-function computeNewFontSize(element, direction) {
-    // Get computed font size (includes CSS styles, not just inline)
-    let computedStyle = window.getComputedStyle(element);
-    let currentSizeString = computedStyle.fontSize;
-
-
-    let currentSize = currentSizeString === '' ? 14 : Number(currentSizeString.replace('px', ''));
-
-    if (direction === INCREASE) {
-        return currentSize * SCALE_STEP;
-    } else {
-        return currentSize / SCALE_STEP;
-    }
-}
-
-function resizeFontOfElement(element, which_dir) {
-    let newFontSize = computeNewFontSize(element, which_dir);
-
-    if (newFontSize > MIN_FONT_SIZE) {
-        element.style.fontSize = `${newFontSize}px`;
-    }
-}
-
-function applyTextResizeToElementAndChildren(element, which_dir) {
-    resizeFontOfElement(element, which_dir);
-
-    // Recursively apply to all children
-    for (let child of element.children) {
-        applyTextResizeToElementAndChildren(child, which_dir);
-    }
-}
-
-function _onWheel_imageResize(journal_win, which_dir) {
-    let images = journal_win.getElementsByTagName('img');
-
-    if (images.length === 0) {
-        return;
-    }
-
-    for (let img of images) {
-        let current_width = img.width;
-        let aspect_ratio = img.naturalWidth / img.naturalHeight;
-
-        let new_width, new_height;
-        if (which_dir === INCREASE) {
-            new_width = current_width * SCALE_STEP;
-            new_height = new_width / aspect_ratio;
-
-            img.style.width = `${new_width}px`;
-            img.style.height = `${new_height}px`;
-        } else if (which_dir === DECREASE) {
-            new_width = current_width / SCALE_STEP
-            new_height = new_width / aspect_ratio;
-
-            if (new_width > MIN_IMG_SIZE && new_height > MIN_IMG_SIZE) {
-                img.style.width = `${new_width}px`;
-                img.style.height = `${new_height}px`;
-            }
-        }
-
-
-    }
-}
-
-
-function getTextDomElement(journal_win, isMonkSheet) {
-    let textBody;
-    let applyToChildren = true;
-    let applySelf = true;
-
-    if (isMonkSheet) {
-        // This is for Monk's Journal Sheet. We can manipulate the whole element directly
-        textBody = journal_win.getElementsByClassName("sheet-body")[0];
-        applyToChildren = true;
-    }
-
-    if (!textBody) {
-        // ProseMirror editor
-        textBody = journal_win.getElementsByClassName('editor-content')[0];
-    }
-
-    if (!textBody) {
-        // Foundry's default in Read-Only mode
-        textBody = journal_win.getElementsByClassName('journal-page-content')[0];
-    }
-
-
-    return {textBody, applyToChildren, applySelf};
-}
-
-

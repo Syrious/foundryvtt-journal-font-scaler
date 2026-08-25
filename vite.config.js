@@ -9,17 +9,17 @@ export default defineConfig({
   base: `/${s_PACKAGE_ID}/`,
   publicDir: false,
   server: {
-    port: 30001,
+    port: 31014,
     open: '/game',
     proxy: {
       // Serves static files from main Foundry server.
-      [`^(/${s_PACKAGE_ID}/(assets|lang|packs|style.css))`]: 'http://localhost:30000',
+      [`^(/${s_PACKAGE_ID}/(assets|lang|packs|style.css))`]: 'http://localhost:30014',
 
       // All other paths besides package ID path are served from main Foundry server.
-      [`^(?!/${s_PACKAGE_ID}/)`]: 'http://localhost:30000',
+      [`^(?!/${s_PACKAGE_ID}/)`]: 'http://localhost:30014',
 
       // Enable socket.io from main Foundry server.
-      '/socket.io': {target: 'ws://localhost:30000', ws: true}
+      '/socket.io': {target: 'ws://localhost:30014', ws: true}
     }
   },
   build: {

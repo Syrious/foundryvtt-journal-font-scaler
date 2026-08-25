@@ -1,6 +1,5 @@
 import {setupScript} from "./scripts/script";
 import {addSettings} from "./scripts/settings";
-import {verifyPrerequisites} from "./scripts/helper";
 
 Hooks.on('init', () => {
     addSettings();
@@ -8,8 +7,4 @@ Hooks.on('init', () => {
 
 Hooks.once('setup', function () {
     setupScript();
-});
-
-Hooks.once('ready', () => {
-    verifyPrerequisites()
 });
