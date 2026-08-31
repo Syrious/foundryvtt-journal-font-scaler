@@ -6,20 +6,20 @@ const MIN_FONT_SIZE = 3;
 let scaleImages = false;
 
 const ZOOM_CONFIG = {
-    // Journal Sheets selectrs
-    sheets: [
+    // Editor selectors
+    selectors: [
         '.sheet.journal-sheet .journal-entry-pages', // Default Foundry
         '.sheet.journal-sheet .sheet-main', // Campaign Codex
         '.sheet.monks-journal-sheet', // Monk's Journal
         '.sheet.item-sheet',
-        '.wgtngm-view-notes .vn-editor-container' // Mini Calendar
-    ],
-    // Editor selectors
-    editors: [
+        '.wgtngm-view-notes .vn-editor-container', // Mini Calendar
+        '.editor-content',
         '.journal-page-content',
+        '.editor-container',
         '.editor-content',
         '.editor',
         '.prosemirror',
+        '.ProseMirror',
         '.monks-journal-content'
     ]
 };
@@ -47,38 +47,33 @@ export function setScaleImages(newScaleImages) {
 function handleJournalResize(event) {
     if (!event.ctrlKey) return;
 
-    const sheetSelector = ZOOM_CONFIG.sheets.join(', ');
-    const journalSheet = event.target.closest(sheetSelector);
-    if (!journalSheet) return;
+    const editorSelector = ZOOM_CONFIG.selectors.join(', ');
+    const editor = event.target.closest(editorSelector);
+    if (!editor) return;
 
     event.preventDefault();
 
     const direction = event.deltaY < 0 ? 'increase' : 'decrease';
 
-    resizeJournalText(journalSheet, direction);
+    resizeJournalText(editor, direction);
 
     if (scaleImages) {
-        resizeJournalImages(journalSheet, direction, event.target);
+        resizeJournalImages(editor, direction, event.target);
     }
 }
 
 /**
- * Adjusts the font size of matched editor elements inside the sheet.
- * @param {HTMLElement} journalSheet
+ * Adjusts the font size of the matched editor element.
+ * @param {HTMLElement} editor
  * @param {'increase'|'decrease'} direction
  */
-function resizeJournalText(journalSheet, direction) {
-    const editorSelector = ZOOM_CONFIG.editors.join(', ');
-    const editors = journalSheet.querySelectorAll(editorSelector);
+function resizeJournalText(editor, direction) {
+    const currentSize = parseFloat(window.getComputedStyle(editor).fontSize) || 16;
+    const newSize = direction === 'increase' ? currentSize * SCALE_STEP : currentSize / SCALE_STEP;
 
-    editors.forEach(editor => {
-        const currentSize = parseFloat(window.getComputedStyle(editor).fontSize) || 16;
-        const newSize = direction === 'increase' ? currentSize * SCALE_STEP : currentSize / SCALE_STEP;
-
-        if (newSize >= MIN_FONT_SIZE) {
-            editor.style.fontSize = `${newSize}px`;
-        }
-    });
+    if (newSize >= MIN_FONT_SIZE) {
+        editor.style.fontSize = `${newSize}px`;
+    }
 }
 
 /**
