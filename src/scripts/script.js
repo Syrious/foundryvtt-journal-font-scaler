@@ -2,25 +2,14 @@ import {moduleId} from "./helper";
 
 const SCALE_STEP = 1.1;
 const MIN_IMG_SIZE = 40;
-const MIN_FONT_SIZE = 3;
+const MIN_FONT_SIZE = 8;
 let scaleImages = false;
 
 const ZOOM_CONFIG = {
-    // Editor selectors
     selectors: [
-        '.sheet.journal-sheet .journal-entry-pages', // Default Foundry
-        '.sheet.journal-sheet .sheet-main', // Campaign Codex
-        '.sheet.monks-journal-sheet', // Monk's Journal
-        '.sheet.item-sheet',
-        '.wgtngm-view-notes .vn-editor-container', // Mini Calendar
-        '.editor-content',
-        '.journal-page-content',
-        '.editor-container',
-        '.editor-content',
-        '.editor',
-        '.prosemirror',
-        '.ProseMirror',
-        '.monks-journal-content'
+        '.journal-entry-pages', // Default Foundry journal
+        '.editor-content.ProseMirror', // Default Foundry editor
+        '.editor', // dnd5e biography
     ]
 };
 
@@ -51,7 +40,6 @@ function handleJournalResize(event) {
     const editor = event.target.closest(editorSelector);
     if (!editor) return;
 
-    console.log(editor.className)
     event.preventDefault();
 
     const direction = event.deltaY < 0 ? 'increase' : 'decrease';
@@ -59,9 +47,9 @@ function handleJournalResize(event) {
     if (editor.className?.includes("ProseMirror")) {
         resizeParentDivElement(editor, direction);
     } else {
-        resizeTextElements(editor, direction);
-
     }
+
+    resizeTextElements(editor, direction);
 
     if (scaleImages) {
         resizeJournalImages(editor, direction, event.target);
@@ -114,9 +102,7 @@ function resizeTextElements(editor, direction) {
 
     textElements.forEach(element => {
         const currentSize = parseFloat(window.getComputedStyle(element).fontSize) || 16;
-        const newSize = direction === 'increase'
-            ? currentSize * SCALE_STEP
-            : currentSize / SCALE_STEP;
+        const newSize = direction === 'increase' ? currentSize * SCALE_STEP : currentSize / SCALE_STEP;
 
         if (newSize >= MIN_FONT_SIZE) {
             element.style.fontSize = `${newSize}px`;
