@@ -2,7 +2,7 @@
   "id": "journal-font-scaler",
   "title": "Journal Scaler",
   "description": "Use CTRL + mouse wheel to scale texts and images of journal entries",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "compatibility": {
     "minimum": "13",
     "verified": "14.365"

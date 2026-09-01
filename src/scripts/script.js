@@ -3,6 +3,36 @@ import {moduleId} from "./helper";
 const SCALE_STEP = 1.1;
 const MIN_IMG_SIZE = 40;
 const MIN_FONT_SIZE = 8;
+const FOUNDRY_FONT_SIZE_DEFAULTS = {
+    "--font-size-10": "0.625rem",
+    "--font-size-11": "0.6875rem",
+    "--font-size-12": "0.75rem",
+    "--font-size-13": "0.8125rem",
+    "--font-size-14": "0.875rem",
+    "--font-size-15": "0.9375rem",
+    "--font-size-16": "1rem",
+    "--font-size-18": "1.125rem",
+    "--font-size-20": "1.25rem",
+    "--font-size-24": "1.5rem",
+    "--font-size-28": "1.75rem",
+    "--font-size-32": "2rem",
+    "--font-size-36": "2.25rem",
+    "--font-size-40": "2.5rem",
+    "--font-size-48": "3rem",
+    "--font-size-64": "4rem",
+    "--font-size-80": "5rem"
+};
+
+const FOUNDRY_DERIVED_FONT_SIZES = {
+    "--font-h1-size": "var(--font-size-48)",
+    "--font-h2-size": "var(--font-size-32)",
+    "--font-h3-size": "var(--font-size-28)",
+    "--font-h4-size": "var(--font-size-24)",
+    "--font-h5-size": "var(--font-size-20)",
+    "--font-h6-size": "var(--font-size-16)"
+};
+
+const frameworkFontScaleStates = new WeakMap();
 let scaleImages = false;
 
 const ZOOM_CONFIG = {
@@ -46,10 +76,10 @@ function handleJournalResize(event) {
 
     if (editor.className?.includes("ProseMirror")) {
         resizeParentDivElement(editor, direction);
+        resizeFrameworkFontVariables(editor, direction);
     } else {
+        resizeTextElements(editor, direction);
     }
-
-    resizeTextElements(editor, direction);
 
     if (scaleImages) {
         resizeJournalImages(editor, direction, event.target);
@@ -70,6 +100,37 @@ function resizeParentDivElement(editor, direction) {
     }
 }
 
+function resizeFrameworkFontVariables(editor, direction) {
+    let state = frameworkFontScaleStates.get(editor);
+
+    if (!state) {
+        const editorStyles = window.getComputedStyle(editor);
+        const baseSizes = {};
+
+        for (const [variableName, defaultValue] of Object.entries(FOUNDRY_FONT_SIZE_DEFAULTS)) {
+            baseSizes[variableName] = editorStyles.getPropertyValue(variableName).trim() || defaultValue;
+        }
+
+        state = {scale: 1, baseSizes};
+        frameworkFontScaleStates.set(editor, state);
+    }
+
+    const newScale = direction === "increase"
+        ? state.scale * SCALE_STEP
+        : state.scale / SCALE_STEP;
+
+    if (10 * newScale < MIN_FONT_SIZE) return;
+
+    for (const [variableName, baseSize] of Object.entries(state.baseSizes)) {
+        editor.style.setProperty(variableName, `calc(${baseSize} * ${newScale})`);
+    }
+
+    for (const [variableName, value] of Object.entries(FOUNDRY_DERIVED_FONT_SIZES)) {
+        editor.style.setProperty(variableName, value);
+    }
+
+    state.scale = newScale;
+}
 /**
  * Adjusts the font size of text elements inside the editor.
  * @param {HTMLElement} editor

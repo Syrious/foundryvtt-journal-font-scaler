@@ -1,3 +1,6 @@
+# 1.2.1
+- Improves font resizing in Prose Mirror (edit mode)
+
 # 1.2.0
 - Adds compatibility with v14.
 - Adds Mini Calendar and Campaign Codex support 
